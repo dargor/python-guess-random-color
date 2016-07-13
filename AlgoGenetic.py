@@ -70,7 +70,9 @@ class AlgoGenetic(Algo):
             l = []
             for child in children:
                 delta = alpha.delta_e(child)
-                l.append(P(child.red, child.green, child.blue, delta))
+                baby = P(child.red, child.green, child.blue, delta)
+                if baby.delta not in [x.delta for x in l]:
+                    l.append(baby)
             l = sorted(l, key=lambda t: t.delta)[:self.population_size]
             return [Color(c.red, c.green, c.blue) for c in l]
 
