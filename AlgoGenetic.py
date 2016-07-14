@@ -45,7 +45,7 @@ class AlgoGenetic(Algo):
 
             def cross(G1, G2):
                 if random() <= self.CROSSOVER_PROBABILITY:
-                    return (G1 ^ G2) // 2
+                    return G1 ^ G2
                 return G1
 
             def mix(G1, G2):
