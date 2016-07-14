@@ -29,7 +29,7 @@ parser = ArgumentParser()
 parser.add_argument('-a',
                     '--algorithm',
                     help='Algorithm to run',
-                    choices=('random', 'brute', 'genetic'),
+                    choices=('random', 'brute', 'genetic', 'genetic2'),
                     type=str,
                     required=True)
 
@@ -80,6 +80,8 @@ elif args.algorithm == 'brute':
     from AlgoBrute import AlgoBrute as Algo
 elif args.algorithm == 'genetic':
     from AlgoGenetic import AlgoGenetic as Algo
+elif args.algorithm == 'genetic2':
+    from AlgoGenetic2 import AlgoGenetic2 as Algo
 else:
     raise NotImplementedError('Unknown algorithm')
 
