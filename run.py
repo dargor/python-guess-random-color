@@ -21,7 +21,7 @@ from random import seed
 from shutil import get_terminal_size
 from time import sleep
 
-from Color import RandomColor
+from Color import Color, RandomColor
 
 
 parser = ArgumentParser()
@@ -32,6 +32,11 @@ parser.add_argument('-a',
                     choices=('random', 'brute', 'genetic'),
                     type=str,
                     required=True)
+
+parser.add_argument('-c',
+                    '--color',
+                    help='Color to find',
+                    type=str)
 
 parser.add_argument('-d',
                     '--delay',
@@ -103,7 +108,7 @@ def dump(ref, algo, deltas):
 
 def main():
 
-    ref = RandomColor()
+    ref = Color.from_rgb(args.color) if args.color else RandomColor()
     algo = Algo(args.population_size)
 
     n = 0

@@ -23,6 +23,11 @@ from colormath.color_diff import delta_e_cie2000
 
 class Color:
 
+    @classmethod
+    def from_rgb(cls, rgb):
+        c = sRGBColor.new_from_rgb_hex(rgb).get_upscaled_value_tuple()
+        return cls(c[0], c[1], c[2])
+
     def __init__(self, red, green, blue):
 
         assert 0 <= red <= 255
