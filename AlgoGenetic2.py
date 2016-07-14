@@ -57,11 +57,7 @@ class AlgoGenetic2(Algo):
 
             def mutation(n):
                 if random() <= self.MUTATION_PROBABILITY:
-                    n = randint(n - 10, n + 10)
-                    if n < 0:
-                        n = 0
-                    if n > 255:
-                        n = 255
+                    return randint(0, 255)
                 return n
 
             l = []
