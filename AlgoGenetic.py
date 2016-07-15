@@ -14,77 +14,106 @@
 # PERFORMANCE OF THIS SOFTWARE.
 #
 
-from collections import namedtuple
-from random import randint, random
+from random import randint, random, shuffle
 
 from Algo import Algo
 from Color import Color
 
 
-P = namedtuple('P', ['red', 'green', 'blue', 'delta'])
+class P:
+
+    __slots__ = ('red', 'green', 'blue', 'delta')
+
+    def __init__(self, red, green, blue, delta):
+
+        assert 0 <= red <= 255
+        self.red = red
+
+        assert 0 <= green <= 255
+        self.green = green
+
+        assert 0 <= blue <= 255
+        self.blue = blue
+
+        self.delta = delta
+
+    @property
+    def rgb(self):
+        return self.red << 12 | self.green << 8 | self.blue
 
 
 class AlgoGenetic(Algo):
 
-    CROSSOVER_PROBABILITY = 0.7
-    MUTATION_PROBABILITY = 0.4
+    MUTATION_PROBABILITY = 0.05
 
     def tick(self, deltas):
 
         def crossover(mate_1, mate_2):
 
             def combine(G1, G2):
-                if random() <= self.CROSSOVER_PROBABILITY:
-                    return G1 & G2
-                return G1
+                return G1 & G2
 
             def brass(G1, G2):
-                if random() <= self.CROSSOVER_PROBABILITY:
-                    return G1 | G2
-                return G1
+                return G1 | G2
 
             def cross(G1, G2):
-                if random() <= self.CROSSOVER_PROBABILITY:
-                    return G1 ^ G2
-                return G1
+                return G1 ^ G2
 
             def mix(G1, G2):
-                if random() <= self.CROSSOVER_PROBABILITY:
-                    return (G1 + G2) // 2
-                return G1
+                return (G1 + G2) // 2
 
             def mutation(n):
                 if random() <= self.MUTATION_PROBABILITY:
                     return randint(0, 255)
                 return n
 
+            ops = [combine, brass, cross, mix]
+            shuffle(ops)
             l = []
-            for op in (combine, brass, cross, mix):
+            for op in ops:
                 l.append(P(mutation(op(mate_1.red, mate_2.red)),
                            mutation(op(mate_1.green, mate_2.green)),
                            mutation(op(mate_1.blue, mate_2.blue)),
                            None))
             return l
 
-        def survival():
-            l = []
-            for child in children:
-                delta = alpha.delta_e(child)
-                if delta not in [x.delta for x in l]:
-                    l.append(P(child.red, child.green, child.blue, delta))
-            l = sorted(l, key=lambda t: t.delta)[:self.population_size]
-            return [Color(c.red, c.green, c.blue) for c in l]
-
         parents = []
         for color, delta in zip(self.population, deltas):
             parents.append(P(color.red, color.green, color.blue, delta))
         parents = sorted(parents, key=lambda t: t.delta)
-        alpha = Color(parents[0].red, parents[0].green, parents[0].blue)
+        alpha = parents[0]
 
-        children = []
+        mates = []
+        n = sum([t.delta for t in parents])
         for parent in parents:
-            for child in crossover(alpha, parent):
-                children.append(Color(child.red, child.green, child.blue))
+            delta = parent.delta
+            mating_possibilities = n / parent.delta
+            while mating_possibilities > 0:
+                mates.append(parent)
+                mating_possibilities -= 1
+        shuffle(mates)
 
-        self.population = survival()
+        children = [alpha]
+        n = len(mates) - 1
+        while len(children) < self.population_size:
+            parent_1 = mates[randint(0, n)]
+            parent_2 = mates[randint(0, n)]
+            for child in crossover(parent_1, parent_2):
+                if child not in children:
+                    children.append(child)
+        children = sorted(children, key=lambda t: t.rgb)
+
+        n = children.index(alpha)
+        a = n - self.half_population_size
+        b = n + self.half_population_size
+        if a < 0:
+            a = 0
+            b = self.population_size
+        n = len(children)
+        if b > n:
+            b = n
+            a = n - self.population_size
+        children = children[a:b]
+
+        self.population = [Color(c.red, c.green, c.blue) for c in children]
         assert len(self.population) == self.population_size
