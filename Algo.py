@@ -22,7 +22,12 @@ from Color import RandomColor
 class Algo(ABC):
 
     def __init__(self, population_size):
+
+        assert population_size % 2 == 0
+
+        self.half_population_size = population_size // 2
         self.population_size = population_size
+
         self.set_random_population()
 
     def set_random_population(self):
