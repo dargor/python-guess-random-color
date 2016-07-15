@@ -67,9 +67,15 @@ parser.add_argument('-s',
 args = parser.parse_args()
 
 
+columns, lines = get_terminal_size()
+
 if not args.population_size:
-    columns, lines = get_terminal_size()
     args.population_size = (columns // 5) - 1
+    if args.population_size % 2 != 0:
+        args.population_size -= 1
+
+if args.population_size % 2 != 0:
+    raise ValueError('Population must be a multiple of 2')
 
 if args.seed:
     seed(args.seed)
@@ -145,6 +151,7 @@ def main():
     print('Color found     : {} {} (\u0394E = {:.3f})'.format(color,
                                                               color.rgb,
                                                               delta))
+    print('Algorithm       : {}'.format(algo.__class__.__name__))
     print('Iterations      : {}'.format(n))
     print('Population size : {}'.format(args.population_size))
     print('Colors tested   : {}'.format(n * args.population_size))
