@@ -16,30 +16,8 @@
 
 from random import randint, random, shuffle
 
-from Algo import Algo
+from Algo import Algo, P
 from Color import Color
-
-
-class P:
-
-    __slots__ = ('red', 'green', 'blue', 'delta')
-
-    def __init__(self, red, green, blue, delta):
-
-        assert 0 <= red <= 255
-        self.red = red
-
-        assert 0 <= green <= 255
-        self.green = green
-
-        assert 0 <= blue <= 255
-        self.blue = blue
-
-        self.delta = delta
-
-    @property
-    def rgb(self):
-        return self.red << 12 | self.green << 8 | self.blue
 
 
 class AlgoGenetic(Algo):
@@ -86,7 +64,6 @@ class AlgoGenetic(Algo):
         mates = []
         n = sum([t.delta for t in parents])
         for parent in parents:
-            delta = parent.delta
             mating_possibilities = n / parent.delta
             while mating_possibilities > 0:
                 mates.append(parent)

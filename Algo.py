@@ -43,3 +43,25 @@ class Algo(ABC):
     @abstractmethod
     def tick(self, deltas):
         pass
+
+
+class P:
+
+    __slots__ = ('red', 'green', 'blue', 'delta')
+
+    def __init__(self, red, green, blue, delta):
+
+        assert 0 <= red <= 255
+        self.red = red
+
+        assert 0 <= green <= 255
+        self.green = green
+
+        assert 0 <= blue <= 255
+        self.blue = blue
+
+        self.delta = delta
+
+    @property
+    def rgb(self):
+        return self.red << 12 | self.green << 8 | self.blue
