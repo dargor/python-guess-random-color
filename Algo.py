@@ -16,7 +16,7 @@
 
 from abc import ABC, abstractmethod
 
-from Color import RandomColor
+from Color import RandomColor, Color
 
 
 class Algo(ABC):
@@ -65,3 +65,7 @@ class P:
     @property
     def rgb(self):
         return self.red << 12 | self.green << 8 | self.blue
+
+    @property
+    def color(self):
+        return Color(self.red, self.green, self.blue)

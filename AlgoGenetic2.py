@@ -17,7 +17,6 @@
 from random import randint, random, shuffle
 
 from Algo import Algo, P
-from Color import Color
 
 
 class AlgoGenetic2(Algo):
@@ -30,20 +29,30 @@ class AlgoGenetic2(Algo):
 
             def reproduce(G1, G2, version):
 
+                def mutation(n):
+                    if random() <= self.MUTATION_PROBABILITY:
+                        return randint(0, 255)
+                    return n
+
                 def alleles(gene):
                     a1 = (gene & 0xf0) >> 4
                     a2 = gene & 0x0f
                     return a1, a2
 
+                G1 = mutation(G1)
+                G2 = mutation(G2)
+
                 G1A1, G1A2 = alleles(G1)
                 G2A1, G2A2 = alleles(G2)
 
                 if version == 1:
-                    return (G1A1 << 4) | G2A2
+                    new_gene = (G1A1 << 4) | G2A2
                 elif version == 2:
-                    return (G2A1 << 4) | G1A2
+                    new_gene = (G2A1 << 4) | G1A2
                 else:
-                    raise NotImplementedError('Unknown version')
+                    raise NotImplementedError('Unknown reproduction method')
+
+                return mutation(new_gene)
 
             def reproduce1(G1, G2):
                 return reproduce(G1, G2, 1)
@@ -51,18 +60,13 @@ class AlgoGenetic2(Algo):
             def reproduce2(G1, G2):
                 return reproduce(G1, G2, 2)
 
-            def mutation(n):
-                if random() <= self.MUTATION_PROBABILITY:
-                    return randint(0, 255)
-                return n
-
             ops = [reproduce1, reproduce2]
             shuffle(ops)
             l = []
             for op in ops:
-                l.append(P(mutation(op(mate_1.red, mate_2.red)),
-                           mutation(op(mate_1.green, mate_2.green)),
-                           mutation(op(mate_1.blue, mate_2.blue)),
+                l.append(P(op(mate_1.red, mate_2.red),
+                           op(mate_1.green, mate_2.green),
+                           op(mate_1.blue, mate_2.blue),
                            None))
             return l
 
@@ -103,5 +107,5 @@ class AlgoGenetic2(Algo):
             a = n - self.population_size
         children = children[a:b]
 
-        self.population = [Color(c.red, c.green, c.blue) for c in children]
+        self.population = [c.color for c in children]
         assert len(self.population) == self.population_size
