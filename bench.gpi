@@ -1,0 +1,21 @@
+#!/usr/bin/env gnuplot
+
+set term pngcairo size 800, 600 font "Verdana,9"
+set output "bench.png"
+
+set xlabel "Steps"
+set xtics 10
+set format x "%.0f"
+
+set ylabel "Duration (seconds)"
+set ytics 0.2
+set format y "%.1f"
+
+set key left top
+set tics nomirror
+set border 3
+set grid
+
+plot "bench.dat" using 1:2 title "AlgoGenetic1" with point linecolor rgb "red", \
+     "bench.dat" using 1:3 title "AlgoGenetic2" with point linecolor rgb "green", \
+     "bench.dat" using 1:4 title "AlgoGenetic3" with point linecolor rgb "blue", \
