@@ -32,13 +32,16 @@ This is the benchmark main entry point.
 
 ```
 $ ./run.py -h
-usage: run.py [-h] -a {random,brute,genetic} [-d DELAY] [-f FITNESS]
-              [-i ITERATIONS] [-p POPULATION_SIZE] [-s SEED]
+usage: run.py [-h] -a {random,brute,genetic1,genetic2,genetic3} [-c COLOR]
+              [-d DELAY] [-f FITNESS] [-i ITERATIONS] [-p POPULATION_SIZE]
+              [-s SEED]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a {random,brute,genetic}, --algorithm {random,brute,genetic}
+  -a {random,brute,genetic1,genetic2,genetic3}, --algorithm {random,brute,genetic1,genetic2,genetic3}
                         Algorithm to run
+  -c COLOR, --color COLOR
+                        Color to find
   -d DELAY, --delay DELAY
                         Delay between each iteration
   -f FITNESS, --fitness FITNESS
@@ -106,30 +109,85 @@ This one has absolutely no subtlety : it generates a new random population at ea
 
 ## AlgoGenetic.py
 
-Genetic algorithm.
+Base abstract class for genetic algorithms : selection, reproduction and mutations are taken care of by this abstract class.
 
-```
-$ ./run.py -a genetic -s 42
-[...]
-Color to find   : ████ #390C8C
-Color found     : ████ #3C108D (ΔE = 0.698)
-Iterations      : 5
-Population size : 26
-Colors tested   : 130
-All that in     : 0.221 seconds
-```
+The fittest parents get many mating possibilities, while the lesser ones get only a few mating opportunities (but they still get at least one, to preserve our genetic pool diversity).
 
-Faster, with a much better result and quite nice to watch.
-
-It works by picking an alpha color (the one with the best ΔE), and mating it with all the other colors of our tiny population.
-
-This process gives `N * 4` children colors (there are four genetic operators - excluding mutations, and of course here the genes are the red/green/blue values of the colors).
-
-Only the best children survive to form a new population, which is returned as the result of the current iteration.
+When we have enough children, we keep the best ones to form a new generation.
 
 After some iterations, the algorithm converges to a quite good solution.
 
 See this [page](https://en.wikipedia.org/wiki/Genetic_algorithm) for more details on genetic algorithms.
+
+An actual genetic algorithm must at least define `OPS` (available crossover operations) and `crossover` (their implementations).
+
+## AlgoGenetic1.py
+
+```
+$ ./run.py -a genetic1 -s 42
+[...]
+Color to find   : ████ #390C8C
+Color found     : ████ #360D8A (ΔE = 0.539)
+Algorithm       : AlgoGenetic1
+Iterations      : 15
+Population size : 26
+Colors tested   : 390
+All that in     : 0.149 seconds
+```
+
+This one simply combines bits together, trying to maximize diversity.
+
+Works quite well.
+
+## AlgoGenetic2.py
+
+```
+$ ./run.py -a genetic2 -s 42
+[...]
+Color to find   : ████ #390C8C
+Color found     : ████ #391090 (ΔE = 0.861)
+Algorithm       : AlgoGenetic2
+Iterations      : 13
+Population size : 26
+Colors tested   : 338
+All that in     : 0.131 seconds
+```
+
+This one is an artificial equivalent of how natural crossover works, trying to enhance each generation fitness.
+
+Can be really slow to converge, but its solutions are quite good.
+
+## AlgoGenetic3.py
+
+```
+$ ./run.py -a genetic3 -s 42
+[...]
+Color to find   : ████ #390C8C
+Color found     : ████ #36078C (ΔE = 0.717)
+Algorithm       : AlgoGenetic3
+Iterations      : 10
+Population size : 26
+Colors tested   : 260
+All that in     : 0.096 seconds
+```
+
+This one combines both approaches, merging their strengths.
+
+Best average performance.
+
+## Durations over 100 runs
+
+Data and scripts used in `bench.*`.
+
+![Durations over 100 runs](bench.png)
+
+```
+$ ./bench.sh
+[...]
+AlgoGenetic1 : .290 seconds (mean time)
+AlgoGenetic2 : .393 seconds (mean time)
+AlgoGenetic3 : .212 seconds (mean time)
+```
 
 ## License
 
