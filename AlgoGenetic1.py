@@ -17,21 +17,16 @@
 from AlgoGenetic import AlgoGenetic
 
 
-class AlgoGenetic2(AlgoGenetic):
+class AlgoGenetic1(AlgoGenetic):
 
-    OPS = ['reproduce1', 'reproduce2']
+    OPS = ['combine', 'brass', 'cross', 'mix']
 
     def crossover(self, G1, G2, op):
-
-        def alleles(gene):
-            a1 = (gene & 0xf0) >> 4
-            a2 = gene & 0x0f
-            return a1, a2
-
-        G1A1, G1A2 = alleles(G1)
-        G2A1, G2A2 = alleles(G2)
-
-        if op == 'reproduce1':
-            return (G1A1 << 4) | G2A2
-        elif op == 'reproduce2':
-            return (G2A1 << 4) | G1A2
+        if op == 'combine':
+            return G1 & G2
+        elif op == 'brass':
+            return G1 | G2
+        elif op == 'cross':
+            return G1 ^ G2
+        elif op == 'mix':
+            return (G1 + G2) // 2

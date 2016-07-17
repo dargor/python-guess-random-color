@@ -14,24 +14,18 @@
 # PERFORMANCE OF THIS SOFTWARE.
 #
 
-from AlgoGenetic import AlgoGenetic
+from AlgoGenetic1 import AlgoGenetic1
+from AlgoGenetic2 import AlgoGenetic2
 
 
-class AlgoGenetic2(AlgoGenetic):
+class AlgoGenetic3(AlgoGenetic1, AlgoGenetic2):
 
-    OPS = ['reproduce1', 'reproduce2']
+    OPS = AlgoGenetic1.OPS + AlgoGenetic2.OPS
 
     def crossover(self, G1, G2, op):
-
-        def alleles(gene):
-            a1 = (gene & 0xf0) >> 4
-            a2 = gene & 0x0f
-            return a1, a2
-
-        G1A1, G1A2 = alleles(G1)
-        G2A1, G2A2 = alleles(G2)
-
-        if op == 'reproduce1':
-            return (G1A1 << 4) | G2A2
-        elif op == 'reproduce2':
-            return (G2A1 << 4) | G1A2
+        if op in AlgoGenetic1.OPS:
+            return AlgoGenetic1.crossover(self, G1, G2, op)
+        elif op in AlgoGenetic2.OPS:
+            return AlgoGenetic2.crossover(self, G1, G2, op)
+        else:
+            raise ValueError('Unknown op')

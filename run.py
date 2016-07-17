@@ -29,7 +29,11 @@ parser = ArgumentParser()
 parser.add_argument('-a',
                     '--algorithm',
                     help='Algorithm to run',
-                    choices=('random', 'brute', 'genetic', 'genetic2'),
+                    choices=('random',
+                             'brute',
+                             'genetic1',
+                             'genetic2',
+                             'genetic3'),
                     type=str,
                     required=True)
 
@@ -84,10 +88,12 @@ if args.algorithm == 'random':
     from AlgoRandom import AlgoRandom as Algo
 elif args.algorithm == 'brute':
     from AlgoBrute import AlgoBrute as Algo
-elif args.algorithm == 'genetic':
-    from AlgoGenetic import AlgoGenetic as Algo
+elif args.algorithm == 'genetic1':
+    from AlgoGenetic1 import AlgoGenetic1 as Algo
 elif args.algorithm == 'genetic2':
     from AlgoGenetic2 import AlgoGenetic2 as Algo
+elif args.algorithm == 'genetic3':
+    from AlgoGenetic3 import AlgoGenetic3 as Algo
 else:
     raise NotImplementedError('Unknown algorithm')
 
@@ -115,6 +121,8 @@ def dump(ref, algo, deltas):
 
 
 def main():
+
+    print('\033c', end='')
 
     ref = Color.from_rgb(args.color) if args.color else RandomColor()
     algo = Algo(args.population_size)

@@ -14,6 +14,7 @@
 # PERFORMANCE OF THIS SOFTWARE.
 #
 
+from abc import abstractmethod
 from random import randint, random, shuffle
 
 from Algo import Algo, P
@@ -21,56 +22,34 @@ from Algo import Algo, P
 
 class AlgoGenetic(Algo):
 
+    OPS = []
+
     MUTATION_PROBABILITY = 0.05
 
+    @abstractmethod
+    def crossover(self, G1, G2, op):
+        pass
+
+    def reproduce(self, mate_1, mate_2):
+
+        def crossover(G1, G2):
+
+            def mutation(gene):
+                if random() <= self.MUTATION_PROBABILITY:
+                    return randint(0, 255)
+                return gene
+
+            return mutation(self.crossover(mutation(G1),
+                                           mutation(G2),
+                                           self.OPS[0]))
+
+        shuffle(self.OPS)
+        return P(crossover(mate_1.red, mate_2.red),
+                 crossover(mate_1.green, mate_2.green),
+                 crossover(mate_1.blue, mate_2.blue),
+                 None)
+
     def tick(self, deltas):
-
-        def crossover(mate_1, mate_2):
-
-            def reproduce(G1, G2, version):
-
-                def mutation(n):
-                    if random() <= self.MUTATION_PROBABILITY:
-                        return randint(0, 255)
-                    return n
-
-                G1 = mutation(G1)
-                G2 = mutation(G2)
-
-                if version == 'combine':
-                    new_gene = G1 & G2
-                elif version == 'brass':
-                    new_gene = G1 | G2
-                elif version == 'cross':
-                    new_gene = G1 ^ G2
-                elif version == 'mix':
-                    new_gene = (G1 + G2) // 2
-                else:
-                    raise NotImplementedError('Unknown reproduction method')
-
-                return mutation(new_gene)
-
-            def combine(G1, G2):
-                return reproduce(G1, G2, 'combine')
-
-            def brass(G1, G2):
-                return reproduce(G1, G2, 'brass')
-
-            def cross(G1, G2):
-                return reproduce(G1, G2, 'cross')
-
-            def mix(G1, G2):
-                return reproduce(G1, G2, 'mix')
-
-            ops = [combine, brass, cross, mix]
-            shuffle(ops)
-            l = []
-            for op in ops:
-                l.append(P(op(mate_1.red, mate_2.red),
-                           op(mate_1.green, mate_2.green),
-                           op(mate_1.blue, mate_2.blue),
-                           None))
-            return l
 
         parents = []
         for color, delta in zip(self.population, deltas):
@@ -79,22 +58,22 @@ class AlgoGenetic(Algo):
         alpha = parents[0]
 
         mates = []
-        n = sum([t.delta for t in parents])
-        for parent in parents:
-            mating_possibilities = n / parent.delta
+        for position, parent in enumerate(parents):
+            mating_possibilities = self.population_size - position
             while mating_possibilities > 0:
                 mates.append(parent)
                 mating_possibilities -= 1
         shuffle(mates)
 
-        children = [alpha]
+        children = []
         n = len(mates) - 1
         while len(children) < self.population_size:
             parent_1 = mates[randint(0, n)]
             parent_2 = mates[randint(0, n)]
-            for child in crossover(parent_1, parent_2):
-                if child not in children:
-                    children.append(child)
+            child = self.reproduce(parent_1, parent_2)
+            if child not in children:
+                children.append(child)
+        children.append(alpha)
         children = sorted(children, key=lambda t: t.rgb)
 
         n = children.index(alpha)
