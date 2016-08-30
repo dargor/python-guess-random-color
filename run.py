@@ -24,16 +24,22 @@ from time import sleep
 from Color import Color, RandomColor
 
 
+ALGOS = {
+    # args: modules/classes
+    'random': 'AlgoRandom',
+    'brute': 'AlgoBrute',
+    'genetic1': 'AlgoGenetic1',
+    'genetic2': 'AlgoGenetic2',
+    'genetic3': 'AlgoGenetic3',
+}
+
+
 parser = ArgumentParser()
 
 parser.add_argument('-a',
                     '--algorithm',
                     help='Algorithm to run',
-                    choices=('random',
-                             'brute',
-                             'genetic1',
-                             'genetic2',
-                             'genetic3'),
+                    choices=ALGOS.keys(),
                     type=str,
                     required=True)
 
@@ -84,18 +90,7 @@ if args.population_size % 2 != 0:
 if args.seed:
     seed(args.seed)
 
-if args.algorithm == 'random':
-    from AlgoRandom import AlgoRandom as Algo
-elif args.algorithm == 'brute':
-    from AlgoBrute import AlgoBrute as Algo
-elif args.algorithm == 'genetic1':
-    from AlgoGenetic1 import AlgoGenetic1 as Algo
-elif args.algorithm == 'genetic2':
-    from AlgoGenetic2 import AlgoGenetic2 as Algo
-elif args.algorithm == 'genetic3':
-    from AlgoGenetic3 import AlgoGenetic3 as Algo
-else:
-    raise NotImplementedError('Unknown algorithm')
+Algo = getattr(__import__(ALGOS[args.algorithm]), ALGOS[args.algorithm])
 
 
 def dump(ref, algo, deltas):
