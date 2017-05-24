@@ -104,9 +104,7 @@ while best_score != 0:
     mates = []
     for position, parent in enumerate(p):
         mating_possibilities = POPULATION_SIZE - position
-        while mating_possibilities > 0:
-            mates.append(parent)
-            mating_possibilities -= 1
+        mates.extend([parent for _ in range(mating_possibilities)])
     shuffle(mates)
 
     children = [alpha]
