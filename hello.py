@@ -91,7 +91,7 @@ def mate(a, b):
 
 
 epoch = 0
-population = [random_chromosome() for _ in range(POPULATION_SIZE)]
+population = random_population()
 
 scores = print_population()
 best_score = min(scores)
