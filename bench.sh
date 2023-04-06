@@ -16,16 +16,16 @@ do
 	n=$((n + 1))
 done
 
-sum=$(awk '{print $2}' < bench.dat | tr '\n' '+' | sed 's/+$//')
-mean=$(printf "scale=3\n(%s)/%s\n" "${sum}" "${TIMES}" | bc -l)
+sum=$(awk '{print $2}' < bench.dat | tr '\\n' '+' | sed 's/+$//')
+mean=$(printf "scale=3\\n(%s)/%s\\n" "${sum}" "${TIMES}" | bc -l)
 echo "AlgoGenetic1 : ${mean} seconds (mean time)"
 
-sum=$(awk '{print $3}' < bench.dat | tr '\n' '+' | sed 's/+$//')
-mean=$(printf "scale=3\n(%s)/%s\n" "${sum}" "${TIMES}" | bc -l)
+sum=$(awk '{print $3}' < bench.dat | tr '\\n' '+' | sed 's/+$//')
+mean=$(printf "scale=3\\n(%s)/%s\\n" "${sum}" "${TIMES}" | bc -l)
 echo "AlgoGenetic2 : ${mean} seconds (mean time)"
 
-sum=$(awk '{print $4}' < bench.dat | tr '\n' '+' | sed 's/+$//')
-mean=$(printf "scale=3\n(%s)/%s\n" "${sum}" "${TIMES}" | bc -l)
+sum=$(awk '{print $4}' < bench.dat | tr '\\n' '+' | sed 's/+$//')
+mean=$(printf "scale=3\\n(%s)/%s\\n" "${sum}" "${TIMES}" | bc -l)
 echo "AlgoGenetic3 : ${mean} seconds (mean time)"
 
 ./bench.gpi
