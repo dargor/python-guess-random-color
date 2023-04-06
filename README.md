@@ -175,6 +175,12 @@ This one combines both approaches, merging their strengths.
 
 Best average performance.
 
+## So, what does it look like ?
+
+![Example run](run.png)
+
+As you can see, colors are converging quite rapidly and selected candidate is really close to the real deal.
+
 ## Durations over 100 runs
 
 Data and scripts used in `bench.*`.
