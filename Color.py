@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2016, Gabriel Linder <linder.gabriel@gmail.com>
+# Copyright (c) 2023, Gabriel Linder <linder.gabriel@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -16,9 +16,13 @@
 
 from random import randint
 
-from colormath.color_objects import sRGBColor, LabColor
+import numpy as np
 from colormath.color_conversions import convert_color
 from colormath.color_diff import delta_e_cie2000
+from colormath.color_objects import LabColor, sRGBColor
+
+# https://github.com/gtaylor/python-colormath/issues/104
+np.asscalar = lambda x: x.item()
 
 
 class Color:
